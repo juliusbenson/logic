@@ -172,6 +172,17 @@ class Formula:
             current formula.
         """
         # Task 1.3
+        r = []
+        if is_binary(self.root):
+            r.append(self.root)
+            r.extend(self.first.operators())
+            r.extend(self.second.operators())
+        elif is_unary(self.root):
+            r.append(self.root)
+            r.extend(self.first.operators())
+        elif not is_variable(self.root):
+            r.append(self.root)
+        return set(r)
         
     @staticmethod
     def _parse_prefix(string: str) -> Tuple[Union[Formula, None], str]:
