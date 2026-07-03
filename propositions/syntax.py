@@ -110,6 +110,13 @@ class Formula:
             The standard string representation of the current formula.
         """
         # Task 1.1
+        if is_binary(self.root):
+            r = f'({self.first.__repr__()}{self.root}{self.second.__repr__()})'
+        elif is_unary(self.root):
+            r = f'{self.root}{self.first.__repr__()}'
+        else:
+            r = f'{self.root}'
+        return r
 
     def __eq__(self, other: object) -> bool:
         """Compares the current formula with the given one.
