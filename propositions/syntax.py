@@ -153,6 +153,15 @@ class Formula:
             A set of all variable names used in the current formula.
         """
         # Task 1.2
+        r = []
+        if is_binary(self.root):
+            r.extend(self.first.variables())
+            r.extend(self.second.variables())
+        elif is_unary(self.root):
+            r.extend(self.first.variables())
+        elif is_variable(self.root):
+            r.append(self.root)
+        return set(r)
 
     @memoized_parameterless_method
     def operators(self) -> Set[str]:
