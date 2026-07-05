@@ -99,7 +99,8 @@ class Formula:
             self.root, self.first = root, first
         else:
             assert is_binary(root)
-            assert first is not None and second is not None
+            assert first is not None
+            assert second is not None
             self.root, self.first, self.second = root, first, second
 
     @memoized_parameterless_method
@@ -183,7 +184,7 @@ class Formula:
         elif not is_variable(self.root):
             r.append(self.root)
         return set(r)
-        
+
     @staticmethod
     def _parse_prefix(string: str) -> Tuple[Union[Formula, None], str]:
         """Parses a prefix of the given string into a formula.
@@ -202,6 +203,56 @@ class Formula:
             is a string with some human-readable content.
         """
         # Task 1.4
+        if len(string) == 0:
+            ...
+        elif is_constant(string[0]):
+            root,remainder = string[0],string[1:]
+            return Formula(root),remainder
+        elif is_variable(string[0]):
+            # Find where the variable ends...
+            for i in range(len(string)):
+                if i == 0:
+                    dec = string[1:]
+                else:
+                    dec = string[1:-i]
+                if dec.isdecimal():
+                    if i == 0:
+                        root,remainder = string,''
+                    else:
+                        root,remainder = string[0:-i],string[-i:]
+                    return Formula(root),remainder
+            root,remainder = string[0],string[1:]
+            return Formula(root),remainder
+        elif string.startswith('~'):
+            # Then only unary
+            root = '~'
+            first,remainder = Formula._parse_prefix(string[1:])
+            if first is not None:
+                return Formula(root,first),remainder
+        elif string.startswith('('):
+            # we're going to have to remove the closing paren at the end
+            first,remainder = Formula._parse_prefix(string[1:])
+
+            # Next one is going to be a binary operator
+            if remainder.startswith('&'):
+                root = '&'
+                rootRemainder = remainder[1:]
+            elif remainder.startswith('|'):
+                root = '|'
+                rootRemainder = remainder[1:]
+            elif remainder.startswith('->'):
+                root = '->'
+                rootRemainder = remainder[2:]
+            else:
+                print(f'JSB: No binary operator begins {remainder}')
+                return None,''
+            second,remainder = Formula._parse_prefix(rootRemainder)
+
+            # How do we know whether to expect a paren?
+            # the closing paren leads the remainder...
+            if remainder.startswith(')'):
+                return Formula(root,first,second),remainder[1:]
+        return None,''
 
     @staticmethod
     def is_formula(string: str) -> bool:
