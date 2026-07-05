@@ -210,19 +210,11 @@ class Formula:
             return Formula(root),remainder
         elif is_variable(string[0]):
             # Find where the variable ends...
-            for i in range(len(string)):
-                if i == 0:
-                    dec = string[1:]
-                else:
-                    dec = string[1:-i]
-                if dec.isdecimal():
-                    if i == 0:
-                        root,remainder = string,''
-                    else:
-                        root,remainder = string[0:-i],string[-i:]
-                    return Formula(root),remainder
-            root,remainder = string[0],string[1:]
-            return Formula(root),remainder
+            i = 1
+            while i < len(string) and string[i].isdigit():
+                i += 1
+
+            return Formula(string[:i]), string[i:]
         elif string.startswith('~'):
             # Then only unary
             root = '~'
@@ -234,18 +226,15 @@ class Formula:
             first,remainder = Formula._parse_prefix(string[1:])
 
             # Next one is going to be a binary operator
-            if remainder.startswith('&'):
-                root = '&'
-                rootRemainder = remainder[1:]
-            elif remainder.startswith('|'):
-                root = '|'
-                rootRemainder = remainder[1:]
-            elif remainder.startswith('->'):
-                root = '->'
-                rootRemainder = remainder[2:]
-            else:
-                print(f'JSB: No binary operator begins {remainder}')
+            root = None
+            for op in ['->','&','|']:
+                if remainder.startswith(op):
+                    root = op
+                    rootRemainder = remainder[len(op):]
+            if root is None:
+                print(f'JSB: No binary operator begins {remainder =}')
                 return None,''
+
             second,remainder = Formula._parse_prefix(rootRemainder)
 
             # How do we know whether to expect a paren?
