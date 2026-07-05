@@ -271,6 +271,8 @@ class Formula:
         """
         assert Formula.is_formula(string)
         # Task 1.6
+        f,s = Formula._parse_prefix(string)
+        return f
 
     def polish(self) -> str:
         """Computes the polish notation representation of the current formula.
