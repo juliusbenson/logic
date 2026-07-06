@@ -299,6 +299,29 @@ class Formula:
             A formula whose polish notation representation is the given string.
         """
         # Optional Task 1.8
+        if len(string) == 0:
+            ...
+        elif is_constant(string[0]):
+            root = string[0]
+            return Formula(root=root)
+        elif is_variable(string[0]):
+            # Find where the variable ends...
+            i = 1
+            while i < len(string) and string[i].isdigit():
+                i += 1
+
+            root = string[:i]
+            return Formula(root=root)
+        elif string.startswith('~'):
+            root = '~'
+            first = Formula.parse_polish(string[1:])
+            return Formula(root=root,first=first)
+        for op in {'->','&','|'}:
+            if string.startswith(op):
+                first = Formula.parse_polish(string[len(op):])
+                afterFirst = len(first.polish()) + len(op)
+                second = Formula.parse_polish(string[afterFirst:])
+                return Formula(root=op,first=first,second=second)
 
     def substitute_variables(self, substitution_map: Mapping[str, Formula]) -> \
             Formula:
