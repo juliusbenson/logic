@@ -77,8 +77,8 @@ class Formula:
             root, if the root is a binary operator.
     """
     root: str
-    first: Optional[Formula]
-    second: Optional[Formula]
+    first: Optional[Formula] = None
+    second: Optional[Formula] = None
 
     def __init__(self, root: str, first: Optional[Formula] = None,
                  second: Optional[Formula] = None):
@@ -281,6 +281,12 @@ class Formula:
             The polish notation representation of the current formula.
         """
         # Optional Task 1.7
+        r = self.root
+        if self.first:
+            r += self.first.polish()
+        if self.second:
+            r += self.second.polish()
+        return r
 
     @staticmethod
     def parse_polish(string: str) -> Formula:
