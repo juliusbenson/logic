@@ -7,6 +7,7 @@
 """Semantic analysis of propositional-logic constructs."""
 
 from typing import AbstractSet, Iterable, Iterator, Mapping, Sequence, Tuple
+from itertools import product
 
 from propositions.syntax import *
 from propositions.proofs import *
@@ -102,6 +103,11 @@ def all_models(variables: Sequence[str]) -> Iterable[Model]:
     for v in variables:
         assert is_variable(v)
     # Task 2.2
+    for p in product((False,True),repeat=len(variables)):
+        m: Model = {}
+        for i,v in enumerate(variables):
+            m[v] = p[i]
+        yield m
 
 def truth_values(formula: Formula, models: Iterable[Model]) -> Iterable[bool]:
     """Calculates the truth value of the given formula in each of the given
