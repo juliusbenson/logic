@@ -147,6 +147,28 @@ def print_truth_table(formula: Formula) -> None:
     """
     # Task 2.4
 
+    vars = [v for v in formula.variables()]
+    vars.sort()
+    headers = vars.copy()
+    headers.append(str(formula))
+
+    table:list[list[bool]] = []
+    for model in all_models(vars):
+        row:list[bool] = [v for v in model.values()]
+        row.append(evaluate(formula,model))
+        table.append(row)
+
+    # Time to print:
+    print(f"| {' | '.join((v for v in headers))} |")
+    print(f"|-{'-|-'.join(('-'*len(v) for v in headers))}-|")
+
+    for row in table:
+        rowStr = '|'
+        for i,cell in enumerate(row):
+            cellStr = 'T' if cell else 'F'
+            rowStr += ' ' + cellStr + ' '*len(headers[i]) + '|'
+        print(rowStr)
+
 def is_tautology(formula: Formula) -> bool:
     """Checks if the given formula is a tautology.
 
