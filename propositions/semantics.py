@@ -78,7 +78,7 @@ def evaluate(formula: Formula, model: Model) -> bool:
     elif root == '|':
         return evaluate(first,model) or evaluate(second,model)
     elif root == '->':
-        return not ((not evaluate(first,model)) and evaluate(second,model))
+        return (not evaluate(first,model)) or evaluate(second,model)
     else:
         raise ValueError(f'Unrecognized operator {root}')
 
@@ -179,6 +179,14 @@ def is_tautology(formula: Formula) -> bool:
         ``True`` if the given formula is a tautology, ``False`` otherwise.
     """
     # Task 2.5a
+    allEvals: list[bool] = [
+        evaluate(formula,model) for 
+        model in 
+        all_models(list(formula.variables()))]
+    if False in allEvals:
+        return False
+    else:
+        return True
 
 def is_contradiction(formula: Formula) -> bool:
     """Checks if the given formula is a contradiction.
@@ -190,6 +198,14 @@ def is_contradiction(formula: Formula) -> bool:
         ``True`` if the given formula is a contradiction, ``False`` otherwise.
     """
     # Task 2.5b
+    allEvals: list[bool] = [
+        evaluate(formula,model) for 
+        model in 
+        all_models(list(formula.variables()))]
+    if True in allEvals:
+        return False
+    else:
+        return True
 
 def is_satisfiable(formula: Formula) -> bool:
     """Checks if the given formula is satisfiable.
@@ -201,6 +217,14 @@ def is_satisfiable(formula: Formula) -> bool:
         ``True`` if the given formula is satisfiable, ``False`` otherwise.
     """
     # Task 2.5c
+    allEvals: list[bool] = [
+        evaluate(formula,model) for 
+        model in 
+        all_models(list(formula.variables()))]
+    if True in allEvals:
+        return True
+    else:
+        return False
 
 def _synthesize_for_model(model: Model) -> Formula:
     """Synthesizes a propositional formula in the form of a single conjunctive
