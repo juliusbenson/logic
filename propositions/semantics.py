@@ -242,6 +242,23 @@ def _synthesize_for_model(model: Model) -> Formula:
     assert len(model.keys()) > 0
     # Task 2.6
 
+    def helper(lModel:List[tuple[str, bool]]) -> Formula:
+        name,truth = lModel[0]
+
+        if name is None: return Formula(root='')
+
+        if truth:
+            first = Formula(root=name)
+        else:
+            first = Formula(root='~',first=Formula(root=name))
+
+        if len(lModel) == 1: # This means we're done
+            return first
+        else:
+            return Formula(root='&',first=first,second=helper(lModel[1:]))
+
+    return helper(list(model.items()))
+
 def synthesize(variables: Sequence[str], values: Iterable[bool]) -> Formula:
     """Synthesizes a propositional formula in DNF over the given variable names,
     that has the specified truth table.
