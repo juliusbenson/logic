@@ -245,8 +245,6 @@ def _synthesize_for_model(model: Model) -> Formula:
     def helper(lModel:List[tuple[str, bool]]) -> Formula:
         name,truth = lModel[0]
 
-        if name is None: return Formula(root='')
-
         if truth:
             first = Formula(root=name)
         else:
