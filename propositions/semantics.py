@@ -282,6 +282,29 @@ def synthesize(variables: Sequence[str], values: Iterable[bool]) -> Formula:
     assert len(variables) > 0
     # Task 2.7
 
+    def helper(trueModels: list[Model]) -> Formula:
+        # assuming trueModels != [] ...
+        syn = _synthesize_for_model(trueModels[0])
+
+        # Is this the last one?
+        if len(trueModels) == 1: return syn # return its formula
+
+        # Not the last one, DNF the rest
+        return Formula('|',syn,helper(trueModels[1:]))
+
+    trueModels = [
+        model
+        for model,value
+        in zip(all_models(variables),values)
+        if value
+    ]
+
+    if trueModels == []:
+        # If no true models, return contradiction:
+        return Formula('&',Formula(variables[0]),Formula('~',Formula(variables[0])))
+
+    return helper(trueModels)
+
 def _synthesize_for_all_except_model(model: Model) -> Formula:
     """Synthesizes a propositional formula in the form of a single disjunctive
     clause that evaluates to ``False`` in the given model, and to ``True`` in
