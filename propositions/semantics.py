@@ -321,6 +321,21 @@ def _synthesize_for_all_except_model(model: Model) -> Formula:
     assert len(model.keys()) > 0
     # Optional Task 2.8
 
+    def helper(lModel:List[tuple[str, bool]]) -> Formula:
+        name,truth = lModel[0]
+
+        if not truth:
+            first = Formula(root=name)
+        else:
+            first = Formula(root='~',first=Formula(root=name))
+
+        if len(lModel) == 1: # This means we're done
+            return first
+        else:
+            return Formula(root='|',first=first,second=helper(lModel[1:]))
+
+    return helper(list(model.items()))
+
 def synthesize_cnf(variables: Sequence[str], values: Iterable[bool]) -> Formula:
     """Synthesizes a propositional formula in CNF over the given variable names,
     that has the specified truth table.
