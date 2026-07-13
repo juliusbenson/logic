@@ -361,6 +361,24 @@ def synthesize_cnf(variables: Sequence[str], values: Iterable[bool]) -> Formula:
     assert len(variables) > 0
     # Optional Task 2.9
 
+    falseModels = (
+        model
+        for model,value
+        in zip(all_models(variables),values)
+        if not value
+    )
+
+    try:
+        formula = _synthesize_for_all_except_model(next(falseModels))
+    except StopIteration:
+        # If no false models, return tautology:
+        return Formula('|',Formula(variables[0]),Formula('~',Formula(variables[0])))
+
+    for model in falseModels:
+        formula = Formula('&',formula,_synthesize_for_all_except_model(model))
+
+    return formula
+
 def evaluate_inference(rule: InferenceRule, model: Model) -> bool:
     """Checks if the given inference rule holds in the given model.
 
