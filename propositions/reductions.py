@@ -8,6 +8,7 @@
 
 from __future__ import annotations
 from typing import AbstractSet, Mapping, Tuple, Union
+from itertools import product
 
 from propositions.syntax import *
 from propositions.semantics import *
@@ -72,6 +73,76 @@ def graph3coloring_to_formula(graph: Graph) -> Formula:
     """
     assert is_graph(graph)
     # Optional Task 2.10a
+
+    # # Encode a graph coloring
+    # def encode(coloring:tuple[int,...]) -> Model:
+    #     # From the book:
+    #     # "A coloring of the graph can be encoded by having, for every vertex v
+    #     # and possible color c, a Boolean variable x_{vc} that represents that
+    #     # vertex v is colored by color c,"
+    #     # This implements it the book way, despite the performance penalty:
+    #     model: Model = {}
+    #     for vertex,color in enumerate(coloring):
+    #         model[f'v{vertex:04d}1'] = False
+    #         model[f'v{vertex:04d}2'] = False
+    #         model[f'v{vertex:04d}3'] = False
+    #         match color:
+    #             case 1: model[f'v{vertex:04d}1'] = True
+    #             case 2: model[f'v{vertex:04d}2'] = True
+    #             case 3: model[f'v{vertex:04d}3'] = True
+    #             case _: raise ValueError(f'Expected color in [1,2,3], got {color=}')
+    #     return model
+
+    # # and the inverse of the encoding
+    # def decode(encoding:Model) -> tuple[int,...]:
+    #     vars = list(variables(encoding))
+    #     vars.sort()
+    #     coloring = []
+    #     for i in range(0,len(vars),3):
+    #         if   encoding[vars[i+0]]: coloring.append(1)
+    #         elif encoding[vars[i+1]]: coloring.append(2)
+    #         elif encoding[vars[i+2]]: coloring.append(3)
+    #         else: raise ValueError(f'Node must have a color')
+    #     return tuple(coloring)
+
+    # Each coloring corresponds to a model (encoding)
+    # Only some colorings are valid
+    # So only some models are valid
+    # Let's represent valid as "True"
+    # So each coloring's model gets a truth value
+    # Just previously, we converted a model into a formula
+    # using _synthesize_for_model()
+    # that gave us a formula that evaluates that model to True
+    # Represent graph coloring validity as the existence of a formula
+    # that evaluates to true under the model that represents that coloring
+
+    n_vertices,edges = graph
+
+    # From the book:
+    # "A coloring of the graph can be encoded by having, for every vertex v
+    # and possible color c, a Boolean variable x_{vc} that represents that
+    # vertex v is colored by color c,"
+    vars = []
+    for v in range(n_vertices):
+        vars.extend([
+            f'v{v:04d}1',
+            f'v{v:04d}2',
+            f'v{v:04d}3',
+        ])
+
+    # we actually only need one valid coloring to be satisfiable...
+    # so given all possible colorings...
+    for i,coloring in enumerate(product([1,2,3],repeat=n_vertices)):
+        dColoring = dict(
+            (i+1,color)
+            for i,color
+            in enumerate(list(coloring))
+        )
+        if is_valid_3coloring(graph,dColoring):
+            values = [False]*(n_vertices**3)
+            values[i] = True # This one is a valid coloring
+            return synthesize(vars,values) # And that's all we need
+    return synthesize(vars,[])
 
 def assignment_to_3coloring(graph: Graph, assignment: Model) -> \
         Mapping[int, int]:
