@@ -30,7 +30,7 @@ def test_graph3coloring_to_formula(debug=False):
         if debug:
             print("Testing graph3coloring_to_formula on", graph)
         formula = graph3coloring_to_formula(graph)
-        assert is_satisfiable(formula) == satisfiable
+        assert is_satisfiable(formula) == satisfiable, f'Expected {satisfiable=}, got {is_satisfiable(formula)} for {formula=}'
 
 def test_assignment_to_3coloring(debug=False):
     for (graph, satisfiable) in TEST_GRAPHS:
