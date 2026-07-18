@@ -74,37 +74,6 @@ def graph3coloring_to_formula(graph: Graph) -> Formula:
     assert is_graph(graph)
     # Optional Task 2.10a
 
-    # # Encode a graph coloring
-    # def encode(coloring:tuple[int,...]) -> Model:
-    #     # From the book:
-    #     # "A coloring of the graph can be encoded by having, for every vertex v
-    #     # and possible color c, a Boolean variable x_{vc} that represents that
-    #     # vertex v is colored by color c,"
-    #     # This implements it the book way, despite the performance penalty:
-    #     model: Model = {}
-    #     for vertex,color in enumerate(coloring):
-    #         model[f'v{vertex:04d}1'] = False
-    #         model[f'v{vertex:04d}2'] = False
-    #         model[f'v{vertex:04d}3'] = False
-    #         match color:
-    #             case 1: model[f'v{vertex:04d}1'] = True
-    #             case 2: model[f'v{vertex:04d}2'] = True
-    #             case 3: model[f'v{vertex:04d}3'] = True
-    #             case _: raise ValueError(f'Expected color in [1,2,3], got {color=}')
-    #     return model
-
-    # # and the inverse of the encoding
-    # def decode(encoding:Model) -> tuple[int,...]:
-    #     vars = list(variables(encoding))
-    #     vars.sort()
-    #     coloring = []
-    #     for i in range(0,len(vars),3):
-    #         if   encoding[vars[i+0]]: coloring.append(1)
-    #         elif encoding[vars[i+1]]: coloring.append(2)
-    #         elif encoding[vars[i+2]]: coloring.append(3)
-    #         else: raise ValueError(f'Node must have a color')
-    #     return tuple(coloring)
-
     # Each coloring corresponds to a model (encoding)
     # Only some colorings are valid
     # So only some models are valid
@@ -116,6 +85,25 @@ def graph3coloring_to_formula(graph: Graph) -> Formula:
     # Represent graph coloring validity as the existence of a formula
     # that evaluates to true under the model that represents that coloring
 
+    def coloringFromModel(model:Model) -> Mapping[int,int]:
+        vars = list(variables(model))
+        vars.sort()
+        n_vertices = len(vars) // 3
+        invalidColoring = dict([(vtx,1) for vtx in range(n_vertices)])
+        mapping = {}
+        for v in range(n_vertices):
+            v1 = vars[v*3]
+            v2 = vars[v*3 + 1]
+            v3 = vars[v*3 + 2]
+            if sum([model[v1],model[v2],model[v3]]) != 1:
+                # Each vertex needs exactly 1 color
+                return invalidColoring
+            if   model[v1]: mapping[v+1] = 1 # vertices are numbered from 1
+            elif model[v2]: mapping[v+1] = 2
+            elif model[v3]: mapping[v+1] = 3
+            else: return invalidColoring
+        return mapping
+
     n_vertices,edges = graph
 
     # From the book:
@@ -125,24 +113,23 @@ def graph3coloring_to_formula(graph: Graph) -> Formula:
     vars = []
     for v in range(n_vertices):
         vars.extend([
-            f'v{v:04d}1',
-            f'v{v:04d}2',
-            f'v{v:04d}3',
+            f'v{v+1:04d}1',
+            f'v{v+1:04d}2',
+            f'v{v+1:04d}3',
         ])
 
-    # we actually only need one valid coloring to be satisfiable...
-    # so given all possible colorings...
-    for i,coloring in enumerate(product([1,2,3],repeat=n_vertices)):
-        dColoring = dict(
-            (i+1,color)
-            for i,color
-            in enumerate(list(coloring))
+    all_models(vars)
+
+    valids = (
+        is_valid_3coloring(
+            graph,
+            coloringFromModel(model)
         )
-        if is_valid_3coloring(graph,dColoring):
-            values = [False]*(n_vertices**3)
-            values[i] = True # This one is a valid coloring
-            return synthesize(vars,values) # And that's all we need
-    return synthesize(vars,[])
+        for model
+        in all_models(vars)
+    )
+
+    return synthesize(vars,valids)
 
 def assignment_to_3coloring(graph: Graph, assignment: Model) -> \
         Mapping[int, int]:
@@ -165,6 +152,18 @@ def assignment_to_3coloring(graph: Graph, assignment: Model) -> \
     formula = graph3coloring_to_formula(graph)
     assert evaluate(formula, assignment)
     # Optional Task 2.10b
+
+    # We basically want to "decode" the model into a graph coloring here...
+    # Well, each vertex needs a color...
+    n_vertices,edges = graph
+    mapping = {}
+    for v in range(n_vertices):
+        # But first we need to find that color in the model
+        if   assignment[f'v{v+1:04d}1']: mapping[v+1] = 1
+        elif assignment[f'v{v+1:04d}2']: mapping[v+1] = 2
+        elif assignment[f'v{v+1:04d}3']: mapping[v+1] = 3
+        else: raise ValueError(f'Vertex must have a color')
+    return mapping
 
 def tricolor_graph(graph: Graph) -> Union[Mapping[int, int], None]:
     """Computes a 3-coloring of the given graph.
