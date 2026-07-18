@@ -44,12 +44,22 @@ def test_task10(debug=False):
     test_tricolor_graph(debug)
 
 test_task1(True)
+print('Task 2.1 complete! 🎉')
 test_task2(True)
+print('Task 2.2 complete! 🎉')
 test_task3(True)
+print('Task 2.3 complete! 🎉')
 test_task4(True)
+print('Task 2.4 complete! 🎉')
 test_task5(True)
+print('Task 2.5 complete! 🎉')
 test_task6(True)
+print('Task 2.6 complete! 🎉')
 test_task7(True)
-#test_task8(True) # Optional
-#test_task9(True) # Optional
-#test_task10(True) # Optional
+print('Task 2.7 complete! 🎉')
+test_task8(True) # Optional
+print('Task 2.8 complete! 🎉')
+test_task9(True) # Optional
+print('Task 2.9 complete! 🎉')
+test_task10(True) # Optional
+print('Task 2.10 complete! 🎉')
