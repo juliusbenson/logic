@@ -27,16 +27,24 @@ def test_task6(debug=False):
     test_parse(debug)
 
 def test_task7(debug=False):
-    test_polish()
+    test_polish(debug)
 
 def test_task8(debug=False):
-    test_parse_polish()
+    test_parse_polish(debug)
 
 test_task1(True)
+print('Task 1.1 complete! 🎉')
 test_task2(True)
+print('Task 1.2 complete! 🎉')
 test_task3(True)
+print('Task 1.3 complete! 🎉')
 test_task4(True)
+print('Task 1.4 complete! 🎉')
 test_task5(True)
+print('Task 1.5 complete! 🎉')
 test_task6(True)
-#test_task7(True) # Optional
-#test_task8(True) # Optional
+print('Task 1.6 complete! 🎉')
+test_task7(True) # Optional
+print('Task 1.7 complete! 🎉')
+test_task8(True) # Optional
+print('Task 1.8 complete! 🎉')
