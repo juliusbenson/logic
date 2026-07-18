@@ -65,22 +65,28 @@ def evaluate(formula: Formula, model: Model) -> bool:
     assert is_model(model)
     assert formula.variables().issubset(variables(model))
     # Task 2.1
+    def impl(p:bool,q:bool) -> bool: return (not p) or q
+    def  xor(p:bool,q:bool) -> bool: return p != q
+    def  iff(p:bool,q:bool) -> bool: return p == q
+    def nand(p:bool,q:bool) -> bool: return not (p and q)
+    def  nor(p:bool,q:bool) -> bool: return not (p  or q)
+
     root = formula.root
     first = formula.first
     second = formula.second
-    if   root == 'T':       return True
-    elif root == 'F':       return False
-    elif is_variable(root): return model[root]
-    elif root == '~':
-        return not evaluate(first,model)
-    elif root == '&':
-        return evaluate(first,model) and evaluate(second,model)
-    elif root == '|':
-        return evaluate(first,model) or evaluate(second,model)
-    elif root == '->':
-        return (not evaluate(first,model)) or evaluate(second,model)
-    else:
-        raise ValueError(f'Unrecognized operator {root}')
+    if is_variable(root): return model[root]
+    match root:
+        case 'T':   return True
+        case 'F':   return False
+        case '~':   return not evaluate(first,model)
+        case '&':   return evaluate(first,model) and evaluate(second,model)
+        case '|':   return evaluate(first,model)  or evaluate(second,model)
+        case '->':  return impl(evaluate(first,model), evaluate(second,model))
+        case '+':   return  xor(evaluate(first,model), evaluate(second,model))
+        case '<->': return  iff(evaluate(first,model), evaluate(second,model))
+        case '-&':  return nand(evaluate(first,model), evaluate(second,model))
+        case '-|':  return  nor(evaluate(first,model), evaluate(second,model))
+        case _:     raise ValueError(f'Unrecognized operator {root}')
 
 def all_models(variables: Sequence[str]) -> Iterable[Model]:
     """Calculates all possible models over the given variable names.
