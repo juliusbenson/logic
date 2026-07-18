@@ -294,7 +294,7 @@ def synthesize(variables: Sequence[str], values: Iterable[bool]) -> Formula:
         try:
             formula = _synthesize_for_model(next(trueModels))
         except StopIteration:
-            # If no false models, return contradiction:
+            # If no true models, return contradiction:
             return Formula('&',Formula(variables[0]),Formula('~',Formula(variables[0])))
 
         for model in trueModels:
