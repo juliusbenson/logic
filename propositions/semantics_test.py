@@ -166,7 +166,7 @@ def test_is_tautology(debug=False):
         formula = Formula.parse(infix)
         if debug:
             print('Testing whether', formula, 'is a tautology')
-        assert is_tautology(formula) == answer
+        assert is_tautology(formula) == answer, f'Expected {answer}, got {str(formula)} {is_tautology(formula)}\n{print_truth_table(formula)}'
 
 def test_is_contradiction(debug=False):
     for infix,answer in [['~(p&q7)', False], ['~(x|~x)', True],
@@ -288,6 +288,7 @@ def __test_synthesize(synthesizer, dnf, debug):
                 print('Testing', synthesizer.__qualname__, 'for variables',
                       all_variables, 'and model-values', all_values)
             formula = synthesizer(tuple(all_variables), all_values)
+            print(f'{formula=}')
             assert type(formula) is Formula, \
                    'Expected a formula, got ' + str(formula)
             if dnf:
