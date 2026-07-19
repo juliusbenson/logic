@@ -349,6 +349,28 @@ class Formula:
             assert is_variable(variable)
         # Task 3.3
 
+        # Just find and replace?
+        # We have to take apart the formula recursively
+
+        def helper(f: Formula, var: str, sub: Formula) -> Formula:
+            if f.root == var:
+                # We found the variable to sub in
+                return sub
+            else:
+                # Dig a layer deeper...
+                if f.first and f.second:
+                    return Formula(f.root,helper(f.first,var,sub),helper(f.second,var,sub))
+                elif f.first:
+                    return Formula(f.root,helper(f.first,var,sub))
+                else:
+                    return Formula(f.root)
+
+        r = Formula(self.root,self.first,self.second)
+        for name,f in substitution_map.items():
+            r = helper(r,name,f)
+
+        return r
+
     def substitute_operators(self, substitution_map: Mapping[str, Formula]) -> \
             Formula:
         """Substitutes in the current formula, each constant or operator `op`
