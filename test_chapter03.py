@@ -9,6 +9,7 @@
 from propositions.syntax_test import *
 from propositions.semantics_test import *
 from propositions.operators_test import *
+from celebration import celebrate
 
 def test_before_tasks(debug=False):
     assert is_binary('+'), 'Change is_binary() before testing Chapter 3 tasks.'
@@ -61,20 +62,20 @@ def test_task6d(debug=False):
 
 test_before_tasks(True)    
 test_task1(True)
-print('Task 3.1 complete! 🎉')
+celebrate('3.1')
 test_task2(True)
-print('Task 3.2 complete! 🎉')
+celebrate('3.2')
 test_task3(True)
-print('Task 3.3 complete! 🎉')
+celebrate('3.3')
 test_task4(True)
-print('Task 3.4 complete! 🎉')
+celebrate('3.4')
 test_task5(True)
-print('Task 3.5 complete! 🎉')
+celebrate('3.5')
 test_task6a(True)
-print('Task 3.6a complete! 🎉')
+celebrate('3.6a')
 test_task6b(True)
-print('Task 3.6b complete! 🎉')
+celebrate('3.6b')
 test_task6c(True)
-print('Task 3.6c complete! 🎉')
+celebrate('3.6c')
 test_task6d(True)
-print('Task 3.6d complete! 🎉')
+celebrate('3.6d')
