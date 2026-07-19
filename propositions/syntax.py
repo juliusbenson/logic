@@ -352,24 +352,20 @@ class Formula:
         # Just find and replace?
         # We have to take apart the formula recursively
 
-        def helper(f: Formula, var: str, sub: Formula) -> Formula:
-            if f.root == var:
+        def helper(f: Formula, subMap: Mapping[str, Formula]) -> Formula:
+            if f.root in subMap.keys():
                 # We found the variable to sub in
-                return sub
+                return subMap[f.root]
             else:
                 # Dig a layer deeper...
                 if f.first and f.second:
-                    return Formula(f.root,helper(f.first,var,sub),helper(f.second,var,sub))
+                    return Formula(f.root,helper(f.first,subMap),helper(f.second,subMap))
                 elif f.first:
-                    return Formula(f.root,helper(f.first,var,sub))
+                    return Formula(f.root,helper(f.first,subMap))
                 else:
                     return Formula(f.root)
 
-        r = Formula(self.root,self.first,self.second)
-        for name,f in substitution_map.items():
-            r = helper(r,name,f)
-
-        return r
+        return helper(Formula(self.root,self.first,self.second),substitution_map)
 
     def substitute_operators(self, substitution_map: Mapping[str, Formula]) -> \
             Formula:
@@ -400,3 +396,39 @@ class Formula:
                    is_binary(operator)
             assert substitution_map[operator].variables().issubset({'p', 'q'})
         # Task 3.4
+
+        # Recursively again?
+        def helper(f: Formula, op: str, sub: Formula) -> Formula:
+            if f.root == op:
+                # then we've got a formula with the operator we're looking for
+                # before replacing, we want to make sure all subexpressions have been subbed
+                # we know there are subexpressions because we matched a binary operator
+                first = helper(f.first,op,sub)
+                second = helper(f.second,op,sub)
+                # now the first and second subexpressions have been subbed properly
+                # replace p with the first, and q with the second
+                varMap = {}
+                varMap['p'] = first
+                varMap['q'] = second
+                return sub.substitute_variables(varMap)#{
+                #     'p':helper(f.first,op,sub),
+                #     'q':helper(f.second,op,sub)
+                # })
+            else:
+                # we've got a formula without that operator in the root
+                # Dig a layer deeper...
+                if f.first and f.second:
+                    # If it's a binary operator, dig deeper
+                    return Formula(f.root,helper(f.first,op,sub),helper(f.second,op,sub))
+                elif f.first:
+                    # Dig deeper if it's a unary operator as well
+                    return Formula(f.root,helper(f.first,op,sub))
+                else:
+                    # Otherwise it's a variable or a constant, so just return that
+                    return Formula(f.root)
+
+        r = Formula(self.root,self.first,self.second)
+        for name,f in substitution_map.items():
+            r = helper(r,name,f)
+
+        return r
