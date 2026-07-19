@@ -52,23 +52,17 @@ EMOJI_WEIGHTS = {
 MESSAGES = {
     "common": [
         "Great work!",
-        "Nicely done!",
+        "Well done!",
         "Success!",
-        "Looking good!",
         "Tests passed!",
-        "Forward!",
-        "Another milestone reached!",
     ],
     "uncommon": [
-        "Excellent craftsmanship!",
         "Code approved!",
         "Progress achieved!",
-        "Another bug falls.",
-        "Elegant work.",
     ],
     "rare": [
         "The interpreter smiles upon you.",
-        "The Python spirits are pleased.",
+        "The Python spirit is pleased.",
         "You have gained experience.",
     ],
     "epic": [
@@ -160,13 +154,13 @@ def celebrate(task: str | None = None) -> None:
 
     message = _random_message(rng)
 
-    # Roll 3–5 emoji independently.
-    emojis = " ".join(
-        _random_emoji(rng)
-        for _ in range(rng.randint(3, 5))
-    )
+    # # Roll 3–5 emoji independently.
+    # emojis = " ".join(
+    #     _random_emoji(rng)
+    #     for _ in range(rng.randint(3, 5))
+    # )
 
     # if task is None:
     #     return f"{message} {emojis}"
 
-    print(f"Task {task} complete! {message} {emojis}")
+    print(f"Task {task} complete! {message} {_random_emoji(rng)}")
