@@ -398,37 +398,33 @@ class Formula:
         # Task 3.4
 
         # Recursively again?
-        def helper(f: Formula, op: str, sub: Formula) -> Formula:
-            if f.root == op:
+        def helper(f: Formula, subMap: Mapping[str, Formula]) -> Formula:
+            if f.root in subMap.keys():
                 # then we've got a formula with the operator we're looking for
                 # before replacing, we want to make sure all subexpressions have been subbed
-                # we know there are subexpressions because we matched a binary operator
-                first = helper(f.first,op,sub)
-                second = helper(f.second,op,sub)
-                # now the first and second subexpressions have been subbed properly
-                # replace p with the first, and q with the second
+                # There might not be a first subexpression, if we match a 0-ary operator (T,F)
                 varMap = {}
-                varMap['p'] = first
-                varMap['q'] = second
-                return sub.substitute_variables(varMap)#{
-                #     'p':helper(f.first,op,sub),
-                #     'q':helper(f.second,op,sub)
-                # })
+                if f.first:
+                    # if we have at least a unary operator...
+                    # replace p with the first
+                    varMap['p'] = helper(f.first,subMap)
+                if f.second:
+                    # if we have a binary operator...
+                    # replace q with the second
+                    varMap['q'] = helper(f.second,subMap)
+                # now the subexpression(s) have been subbed properly
+                return subMap[f.root].substitute_variables(varMap)
             else:
                 # we've got a formula without that operator in the root
                 # Dig a layer deeper...
                 if f.first and f.second:
                     # If it's a binary operator, dig deeper
-                    return Formula(f.root,helper(f.first,op,sub),helper(f.second,op,sub))
+                    return Formula(f.root,helper(f.first,subMap),helper(f.second,subMap))
                 elif f.first:
                     # Dig deeper if it's a unary operator as well
-                    return Formula(f.root,helper(f.first,op,sub))
+                    return Formula(f.root,helper(f.first,subMap))
                 else:
                     # Otherwise it's a variable or a constant, so just return that
                     return Formula(f.root)
 
-        r = Formula(self.root,self.first,self.second)
-        for name,f in substitution_map.items():
-            r = helper(r,name,f)
-
-        return r
+        return helper(Formula(self.root,self.first,self.second),substitution_map)
