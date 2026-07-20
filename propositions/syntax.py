@@ -401,8 +401,9 @@ class Formula:
         def helper(f: Formula, subMap: Mapping[str, Formula]) -> Formula:
             if f.root in subMap.keys():
                 # then we've got a formula with the operator we're looking for
-                # before replacing, we want to make sure all subexpressions have been subbed
-                # There might not be a first subexpression, if we match a 0-ary operator (T,F)
+                # before replacing, we want to make sure all subexpressions have
+                # been subbed. There might not be a first subexpression, if we
+                # match a 0-ary operator (T,F)
                 varMap = {}
                 if f.first:
                     # if we have at least a unary operator...
@@ -419,10 +420,15 @@ class Formula:
                 # Dig a layer deeper...
                 if f.first and f.second:
                     # If it's a binary operator, dig deeper
-                    return Formula(f.root,helper(f.first,subMap),helper(f.second,subMap))
+                    return Formula(
+                        f.root,
+                        helper(f.first,subMap),
+                        helper(f.second,subMap))
                 elif f.first:
                     # Dig deeper if it's a unary operator as well
-                    return Formula(f.root,helper(f.first,subMap))
+                    return Formula(
+                        f.root,
+                        helper(f.first,subMap))
                 else:
                     # Otherwise it's a variable or a constant, so just return that
                     return Formula(f.root)
