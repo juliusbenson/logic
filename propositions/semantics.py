@@ -65,7 +65,7 @@ def evaluate(formula: Formula, model: Model) -> bool:
     assert is_model(model)
     assert formula.variables().issubset(variables(model))
     # Task 2.1
-    def impl(p:bool,q:bool) -> bool: return (not p) or q
+    def impl(p:bool,q:bool) -> bool: return p <= q # True == 1, False == 0
     def  xor(p:bool,q:bool) -> bool: return p != q
     def  iff(p:bool,q:bool) -> bool: return p == q
     def nand(p:bool,q:bool) -> bool: return not (p and q)
