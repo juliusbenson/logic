@@ -83,6 +83,10 @@ def to_implies_not(formula: Formula) -> Formula:
     """
     # Task 3.6c
 
+    return to_not_and(formula).substitute_operators({
+        '&'  :Formula.parse('~(p->~q)'),
+    })
+
 def to_implies_false(formula: Formula) -> Formula:
     """Syntactically converts the given formula to an equivalent formula that
     contains no constants or operators beyond ``'->'`` and ``'F'``.
