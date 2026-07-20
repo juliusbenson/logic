@@ -99,3 +99,7 @@ def to_implies_false(formula: Formula) -> Formula:
         contains no constants or operators beyond ``'->'`` and ``'F'``.
     """
     # Task 3.6d
+
+    return to_implies_not(formula).substitute_operators({
+        '~'  :Formula.parse('(p->F)'),
+    })
