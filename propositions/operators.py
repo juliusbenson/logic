@@ -64,6 +64,12 @@ def to_nand(formula: Formula) -> Formula:
     """
     # Task 3.6b
 
+    return to_not_and_or(formula).substitute_operators({
+        '~'  :Formula.parse('(p-&p)'),
+        '&'  :Formula.parse('((p-&q)-&(p-&q))'),
+        '|'  :Formula.parse('((p-&p)-&(q-&q))'),
+    })
+
 def to_implies_not(formula: Formula) -> Formula:
     """Syntactically converts the given formula to an equivalent formula that
     contains no constants or operators beyond ``'->'`` and ``'~'``.
