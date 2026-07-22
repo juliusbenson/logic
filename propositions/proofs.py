@@ -386,6 +386,15 @@ class Proof:
         assert line_number < len(self.lines)
         # Task 4.6a
 
+        line = self.lines[line_number]
+        if line.is_assumption():
+            return None
+
+        lAs = []
+        if line.assumptions is not None:
+            lAs = [self.lines[a].formula for a in line.assumptions]
+        return InferenceRule(assumptions=lAs,conclusion=line.formula)
+
     def is_line_valid(self, line_number: int) -> bool:
         """Checks if the specified line validly follows from its justifications.
 
