@@ -148,7 +148,29 @@ class InferenceRule:
             for variable in specialization_map2:
                 assert is_variable(variable)
         # Task 4.5a
-        
+
+        if specialization_map1 is None:
+            return None
+        if specialization_map2 is None:
+            return None
+
+        if specialization_map1 == {}:
+            return specialization_map2
+        if specialization_map2 == {}:
+            return specialization_map1
+
+        merged = {}
+        for var1,form1 in specialization_map1.items():
+            for var2,form2 in specialization_map2.items():
+                if var1 != var2:
+                    merged[var1] = form1
+                    merged[var2] = form2
+                elif str(form1) == str(form2):
+                    merged[var1] = form1
+                else:
+                    return None
+        return merged
+
     @staticmethod
     def _formula_specialization_map(general: Formula, specialization: Formula) \
             -> Union[SpecializationMap, None]:
@@ -164,6 +186,19 @@ class InferenceRule:
             in fact not a specialization of `general`.
         """
         # Task 4.5b
+
+        for subMap in subMaps:
+            if specialization == general.substitute_variables(subMap):
+                
+
+        sm1 = ... # ?
+        sm2 = ... # ?
+
+        merged = InferenceRule._merge_specialization_maps(sm1,sm2)
+
+        sm = ... # ?
+
+        return sm
 
     def specialization_map(self, specialization: InferenceRule) -> \
             Union[SpecializationMap, None]:
