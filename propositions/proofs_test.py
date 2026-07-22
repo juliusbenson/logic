@@ -112,7 +112,7 @@ def test_merge_specialization_maps(debug=False):
             frozendict({v: Formula.parse(d2[v]) for v in d2}) if d2 is not None
             else None)
         assert dd == ({v: Formula.parse(d[v]) for v in d}
-                      if d is not None else None), "got " + dd
+                      if d is not None else None), f"got {dd}"
 
 specializations = [
       ['p', 'p', {'p':'p'}],
