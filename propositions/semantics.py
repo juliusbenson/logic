@@ -428,6 +428,12 @@ def evaluate_inference(rule: InferenceRule, model: Model) -> bool:
     assert is_model(model)
     # Task 4.2
 
+    # If all formulas are true except the conclusion, return false. Else true.
+    aVals = [evaluate(a,model) for a in rule.assumptions]
+    cVal = evaluate(rule.conclusion,model)
+
+    return not (all(aVals) and (not cVal))
+
 def is_sound_inference(rule: InferenceRule) -> bool:
     """Checks if the given inference rule is sound, i.e., whether its
     conclusion is a semantically correct implication of its assumptions.
