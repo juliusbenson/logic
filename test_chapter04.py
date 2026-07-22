@@ -10,6 +10,7 @@ from propositions.proofs_test import *
 from propositions.semantics_test import *
 from propositions.some_proofs_test import *
 from propositions.soundness_test import *
+from celebration import celebrate
 
 def test_task1(debug=False):
     test_variables(debug)
@@ -47,12 +48,22 @@ def test_task10(debug=False):
     test_nonsound_rule_of_nonsound_proof(debug)
 
 test_task1(True)
+celebrate('4.1')
 test_task2(True)
+celebrate('4.2')
 test_task3(True)
+celebrate('4.3')
 test_task4(True)
+celebrate('4.4')
 test_task5(True)
+celebrate('4.5')
 test_task6(True)
+celebrate('4.6')
 test_task7(True)
+celebrate('4.7')
 test_task8(True)
+celebrate('4.8')
 test_task9(True)
+celebrate('4.9')
 test_task10(True)
+celebrate('4.10')
