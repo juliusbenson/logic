@@ -90,6 +90,13 @@ class InferenceRule:
         """
         # Task 4.1
 
+        vars:list[str] = []
+        for a in self.assumptions:
+            vars.extend(Formula.variables(a))
+        vars.extend(Formula.variables(self.conclusion))
+
+        return set(vars)
+
     def specialize(self, specialization_map: SpecializationMap) -> \
             InferenceRule:
         """Specializes the current inference rule by simultaneously substituting
