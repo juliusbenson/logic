@@ -189,37 +189,25 @@ class InferenceRule:
 
         # We need to "zip" the abstract syntax tree
 
-        def zipTree(varSide:Formula,formSide:Formula) -> list[tuple[str,Formula]] | None:
+        def zipTree(varSide:Formula,formSide:Formula) -> SpecializationMap | None:
             if is_variable(varSide.root):
-                return [(varSide.root,formSide)]
+                return {varSide.root:formSide}
             if varSide.root == formSide.root:
-                r = []
+                r = {}
                 if varSide.first and formSide.first:
                     fm = zipTree(varSide.first,formSide.first)
-                    if fm is None:
-                        return None
-                    else:
-                        r.extend(fm)
+                    r = InferenceRule._merge_specialization_maps(r,fm)
                 if varSide.second and formSide.second:
                     sm = zipTree(varSide.second,formSide.second)
-                    if sm is None:
-                        return None
-                    else:
-                        r.extend(sm)
+                    r = InferenceRule._merge_specialization_maps(r,sm)
                 return r
             else:
                 return None
 
         zipped = zipTree(general,specialization)
         if zipped is None: return None
-        r = {}
-        for key,val in zipped:
-            if (r.get(key,None) is not None 
-                and (str(r[key]) != str(val))):
-                    return None # duplicate key
-            r[key] = val
 
-        return r
+        return zipped
 
     def specialization_map(self, specialization: InferenceRule) -> \
             Union[SpecializationMap, None]:
@@ -234,6 +222,16 @@ class InferenceRule:
             in fact not a specialization of the current rule.
         """
         # Task 4.5c
+
+        if len(specialization.assumptions) != len(self.assumptions):
+            return None
+
+        r = self._formula_specialization_map(self.conclusion,specialization.conclusion)
+        for i,a in enumerate(self.assumptions):
+            sm = self._formula_specialization_map(a,specialization.assumptions[i])
+            r = self._merge_specialization_maps(r,sm)
+
+        return r
 
     def is_specialization_of(self, general: InferenceRule) -> bool:
         """Checks if the current inference rule is a specialization of the given
