@@ -114,6 +114,15 @@ class InferenceRule:
             assert is_variable(variable)
         # Task 4.4
 
+        newAs = [
+            a.substitute_variables(specialization_map) 
+            for a 
+            in self.assumptions]
+
+        newC = self.conclusion.substitute_variables(specialization_map)
+
+        return InferenceRule(newAs,newC)
+
     @staticmethod
     def _merge_specialization_maps(
             specialization_map1: Union[SpecializationMap, None],
