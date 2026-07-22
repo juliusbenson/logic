@@ -187,18 +187,39 @@ class InferenceRule:
         """
         # Task 4.5b
 
-        for subMap in subMaps:
-            if specialization == general.substitute_variables(subMap):
-                
+        # We need to "zip" the abstract syntax tree
 
-        sm1 = ... # ?
-        sm2 = ... # ?
+        def zipTree(varSide:Formula,formSide:Formula) -> list[tuple[str,Formula]] | None:
+            if is_variable(varSide.root):
+                return [(varSide.root,formSide)]
+            if varSide.root == formSide.root:
+                r = []
+                if varSide.first and formSide.first:
+                    fm = zipTree(varSide.first,formSide.first)
+                    if fm is None:
+                        return None
+                    else:
+                        r.extend(fm)
+                if varSide.second and formSide.second:
+                    sm = zipTree(varSide.second,formSide.second)
+                    if sm is None:
+                        return None
+                    else:
+                        r.extend(sm)
+                return r
+            else:
+                return None
 
-        merged = InferenceRule._merge_specialization_maps(sm1,sm2)
+        zipped = zipTree(general,specialization)
+        if zipped is None: return None
+        r = {}
+        for key,val in zipped:
+            if (r.get(key,None) is not None 
+                and (str(r[key]) != str(val))):
+                    return None # duplicate key
+            r[key] = val
 
-        sm = ... # ?
-
-        return sm
+        return r
 
     def specialization_map(self, specialization: InferenceRule) -> \
             Union[SpecializationMap, None]:
